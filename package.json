@@ -1,0 +1,11 @@
+{
+    "name": "mySite",
+    "version": "v0.0.0",
+    "private": true,
+    "dependencies": {
+        "express": "git://github.com/visionmedia/express.git",
+        "connect": "git://github.com/senchalabs/connect.git"
+    },
+    "devDependecies": {
+    }
+}
