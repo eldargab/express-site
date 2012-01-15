@@ -6,6 +6,8 @@
         "express": "git://github.com/visionmedia/express.git",
         "connect": "git://github.com/senchalabs/connect.git"
     },
-    "devDependecies": {
+    "devDependencies": {
+        "less": "*",
+        "mocha": "*"
     }
 }
