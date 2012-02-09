@@ -5,7 +5,8 @@ module Lib
       @sources.each {|src|
         to_concat << read_file(src)
       }
-      write_file(@target, to_concat.join("\n\n\n"))
+      sep = (@options && @options[:sep]) || ""
+      write_file(@target, to_concat.join(sep))
     end
   end
 end

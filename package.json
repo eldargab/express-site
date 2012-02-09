@@ -3,8 +3,9 @@
     "version": "v0.0.0",
     "private": true,
     "dependencies": {
-        "express": "git://github.com/visionmedia/express.git",
-        "connect": "git://github.com/senchalabs/connect.git"
+        "express": "2.x",
+        "connect": "1.x",
+        "micro-templates": "git://github.com/eldargab/micro-templates.git"
     },
     "devDependencies": {
         "less": "*",

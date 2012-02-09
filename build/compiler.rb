@@ -16,16 +16,7 @@ module Lib
     end
 
     def uptodate?
-      uptodate = true
-      if File.exist?(@target) then
-        @sources.each { |src|
-          uptodate = false if File.mtime(src) > File.mtime(@target)
-          break if not uptodate 
-        }
-      else
-        uptodate = false
-      end
-      uptodate
+      FileUtils.uptodate?(@target, @sources)
     end
 
     def self.compile(*args)
