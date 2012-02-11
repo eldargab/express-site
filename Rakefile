@@ -2,11 +2,6 @@ require 'rake/clean'
 require_relative './build/lib'
 include Lib
 
-desc 'Watch for changes to trigger rebuilds and restarts'
-task :watch do
-  `watchr --eval "watch('lib') {system 'rake res'}"`
-end
-
 CLOBBER.include('res')
 
 def client(p = '.')
