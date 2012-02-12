@@ -16,9 +16,11 @@ task :res => [
   *copy_task(client('global-scripts'), '*', 'res')
 ]
 
-task :css do
-  Less.compile(FileList[client('styles/**/*.less')], 'res/site.css', :main => client('styles/bootstrap.less'))
+task :css => [:less, *copy_task(client, 'styles/img/*', 'res')]
+task :less do
+  Less.compile(FileList[client('styles/*.less')], 'res/styles/site.css', :main => client('styles/bootstrap.less'))
 end
+
 
 task :expose_common_js do
   CommonJS::Exposer.expose(client('node_modules'), '.', 'res')
