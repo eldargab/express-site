@@ -64,7 +64,7 @@ class Lib::CommonJS::Exposer
     end
 
     index_js = p + 'index.js'
-    return [index_js, index_js] if index_js.exist?
+    return [index_js.relative_path_from(@root), index_js] if index_js.exist?
   end
   private :parse_directory
 end

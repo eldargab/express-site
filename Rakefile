@@ -28,5 +28,5 @@ task :expose_common_js do
 end
 
 task :package_register => :expose_common_js do
-  Concat.compile(FileList['res/**/package-register'], 'res/package-register.js', :sep => "\n")
+  Concat.compile(FileList['res/**/register-package'], 'res/package-register.js', :sep => "\n")
 end
