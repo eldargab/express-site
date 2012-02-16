@@ -24,6 +24,7 @@ end
 
 task :expose_common_js do
   CommonJS::Exposer.expose(client('node_modules'), '.', 'res')
+  CommonJS::Exposer.expose(client, 'pages', 'res')
   CommonJS::Exposer.expose(client, 'bootstrap.js', 'res')
 end
 
