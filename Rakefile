@@ -27,6 +27,7 @@ task :expose_common_js do
   CommonJS::Exposer.expose(client('node_modules'), 'ports/lib/binding', 'res')
   CommonJS::Exposer.expose(client, 'pages', 'res')
   CommonJS::Exposer.expose(client, 'bootstrap.js', 'res')
+  CommonJS::Exposer.expose('lib/node_modules', 'range', 'res')
 end
 
 task :package_register => :expose_common_js do
