@@ -1,4 +1,4 @@
-res/
+/static/
 /node_modules/
 *.swp
 *.swo

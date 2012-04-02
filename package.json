@@ -5,10 +5,12 @@
     "dependencies": {
         "express": "2.x",
         "connect": "1.x",
-        "micro-templates": "git://github.com/eldargab/micro-templates.git"
+        "jade": "*"
     },
     "devDependencies": {
         "less": "*",
-        "mocha": "*"
+        "mocha": "*",
+        "glob": "*",
+        "mkdirp": "*"
     }
 }
