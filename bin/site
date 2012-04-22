@@ -1,0 +1,68 @@
+#!/usr/bin/env node
+
+var PATH = require('path')
+var fs = require('fs')
+var cwd = process.argv[2]
+
+if (cwd) process.chdir(cwd)
+
+require('watch').watchTree('.', {ignoreDotFiles: true}, restart)
+
+
+var server
+var killing = false
+var building = false
+var rebuild = false
+
+function restart () {
+    if (building) {
+        rebuild = true;
+        return
+    }
+
+    if (killing) return;
+
+    if (!server || server.exitCode != null) return startup()
+
+    killing = true
+
+    server.on('exit', function () {
+        killing = false
+        startup()
+    })
+
+    server.kill()
+}
+
+function startup () {
+    if (!PATH.existsSync('make')) return startServer()
+    building = true
+    rebuild = false
+    sh(['./make'], function (code) {
+        building= false
+        if (rebuild) return startup()
+        if (code == 0) startServer()
+    })
+}
+
+function startServer () {
+    var cmd = PATH.existsSync('site')
+        ? ['node', 'site']
+        : ['node', '-e',
+            "require('express-site').listen(3000);" +
+            "console.log('Express server listening on port 3000');"
+        ]
+    server = sh(cmd)
+}
+
+function sh (cmd, cb) {
+    var child = require('child_process').spawn(cmd.shift(), cmd)
+    child.stderr.on('data', function (data) {
+        process.stderr.write(data)
+    })
+    child.stdout.on('data', function (data) {
+        process.stdout.write(data)
+    })
+    if (cb) child.on('exit', cb)
+    return child
+}

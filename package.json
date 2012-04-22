@@ -1,0 +1,16 @@
+{
+  "author": "Eldar Gabdullin <eldargab@gmail.com>",
+  "name": "express-site",
+  "description": "Simple site for web apps prototyping",
+  "version": "0.0.0",
+  "bin": {
+    "site": "./bin/site"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/eldargab/express-site.git"
+  },
+  "dependencies": {
+    "express": "git://github.com/visionmedia/express.git"
+  }
+}
