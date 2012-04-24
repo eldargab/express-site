@@ -35,10 +35,10 @@ function restart () {
 }
 
 function startup () {
-    if (!PATH.existsSync('make')) return startServer()
+    if (!PATH.existsSync('Makejs')) return startServer()
     building = true
     rebuild = false
-    sh(['./make'], function (code) {
+    sh(['./Makejs'], function (code) {
         building= false
         if (rebuild) return startup()
         if (code == 0) startServer()
@@ -50,7 +50,7 @@ function startServer () {
         ? ['node', 'site']
         : ['node', '-e',
             "require('express-site').listen(3000);" +
-            "console.log('Express server listening on port 3000');"
+            "console.log('Site http://localhost:3000 launched on ' + process.cwd());"
         ]
     server = sh(cmd)
 }
