@@ -10,5 +10,6 @@ app.use(express.bodyParser())
 app.use(app.router)
 app.use(express.static(cwd + '/.compiled'))
 app.use(require('./serve-views'))
+app.use(express.static(cwd + '/static'))
 app.use(express.static(cwd));
 app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
