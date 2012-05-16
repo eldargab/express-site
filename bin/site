@@ -2,9 +2,19 @@
 
 var PATH = require('path')
 var fs = require('fs')
-var cwd = process.argv[2]
+var path, cwd, cfg
 
-if (cwd) process.chdir(cwd)
+path = process.argv[2] || process.cwd()
+
+if (fs.statSync(path).isDirectory()) {
+    cwd = path
+    cfg = lookupSiteJson(path)
+} else {
+    cwd = PATH.dirname(path)
+    cfg = JSON.parse(fs.readFileSync(path, 'utf8'))
+}
+
+process.chdir(cwd)
 
 require('watch').watchTree('.', {ignoreDotFiles: true}, restart)
 
@@ -16,11 +26,11 @@ var rebuild = false
 
 function restart () {
     if (building) {
-        rebuild = true;
+        rebuild = true
         return
     }
 
-    if (killing) return;
+    if (killing) return
 
     if (!server || server.exitCode != null) return startup()
 
@@ -35,24 +45,34 @@ function restart () {
 }
 
 function startup () {
-    if (!PATH.existsSync('Makejs')) return startServer()
+    if (!cfg.build) return startApp()
+
     building = true
     rebuild = false
-    sh(['./Makejs'], function (code) {
+    sh(build, function (code) {
         building= false
         if (rebuild) return startup()
-        if (code == 0) startServer()
+        if (code == 0) startApp()
     })
 }
 
-function startServer () {
-    var cmd = PATH.existsSync('site')
-        ? ['node', 'site']
+function startApp () {
+    var cmd = cfg.app
+        ? cfg.app
         : ['node', '-e',
-            "require('express-site').listen(3000);" +
-            "console.log('Site http://localhost:3000 launched on ' + process.cwd());"
+            "require('express-site')().listen(process.env.port || 3000);" +
+            "console.log('Site http://localhost:3000 launched for " + path + "');"
         ]
     server = sh(cmd)
+}
+
+function lookupSiteJson (dir) {
+    var files = fs.readdirSync(dir).filter(function (itm) {
+        return /site\.json$/.test(itm)
+    })
+    return files.length == 1
+        ? JSON.parse(fs.readFileSync(files[0], 'utf8'))
+        : {}
 }
 
 function sh (cmd, cb) {

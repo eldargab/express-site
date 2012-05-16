@@ -11,8 +11,8 @@
     "url": "git://github.com/eldargab/express-site.git"
   },
   "dependencies": {
-    "express": "git://github.com/visionmedia/express.git",
-    "consolidate": "git://github.com/visionmedia/consolidate.js.git",
+    "express": "3.0.x",
+    "connect-views": "git://github.com/eldargab/connect-views.git",
     "watch": "0.5.x"
   }
 }
