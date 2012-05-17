@@ -71,10 +71,7 @@ function startup () {
 function startApp () {
     var cmd = cfg.app
         ? cfg.app
-        : ['node', '-e',
-            "require('express-site')().listen(process.env.port || 3000);" +
-            "console.log('Site http://localhost:3000 launched for " + path + "');"
-        ]
+        : ['node', '-e', "require('express-site')();"]
     server = sh(cmd)
 }
 

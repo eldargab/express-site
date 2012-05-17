@@ -13,5 +13,12 @@ module.exports = function (opts) {
     if (opts.setup) {
         opts.setup(app)
     }
+    if (opts.start) {
+        opts.start(app)
+    } else {
+        var port = opts.port || process.env.port || 3000
+        app.listen(port)
+        console.log('Site http://localhost:' + port + ' launched for ' + opts.root)
+    }
     return app
 }
