@@ -16,7 +16,19 @@ if (fs.statSync(path).isDirectory()) {
 
 process.chdir(cwd)
 
-require('watch').watchTree('.', {ignoreDotFiles: true}, restart)
+cfg.watch = cfg.watch != null ? cfg.watch : ['.']
+
+cfg.watch && cfg.watch.forEach(function (itm) {
+    require('watch').watchTree(itm, {ignoreDotFiles: true}, function (f, curr, prev) {
+        if (typeof f == 'object' && curr === null && prev === null) {
+            // Finished walking the file tree
+            return
+        }
+        restart()
+    })
+})
+
+restart()
 
 
 var server
@@ -49,7 +61,7 @@ function startup () {
 
     building = true
     rebuild = false
-    sh(build, function (code) {
+    sh(cfg.build, function (code) {
         building= false
         if (rebuild) return startup()
         if (code == 0) startApp()
@@ -71,12 +83,12 @@ function lookupSiteJson (dir) {
         return /site\.json$/.test(itm)
     })
     return files.length == 1
-        ? JSON.parse(fs.readFileSync(files[0], 'utf8'))
+        ? JSON.parse(fs.readFileSync(PATH.join(dir, files[0]), 'utf8'))
         : {}
 }
 
 function sh (cmd, cb) {
-    var child = require('child_process').spawn(cmd.shift(), cmd)
+    var child = require('child_process').spawn(cmd[0], cmd.slice(1))
     child.stderr.on('data', function (data) {
         process.stderr.write(data)
     })
