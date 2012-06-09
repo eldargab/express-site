@@ -9,6 +9,7 @@ module.exports = function (opts) {
     app.use(app.router)
     app.use(express.static(opts.root + '/.compiled'))
     app.use(Views(opts))
+    app.use(express.static(opts.root))
     app.use(express.errorHandler({ dumpExceptions: true, showStack: true }))
     if (opts.setup) {
         opts.setup(app)
