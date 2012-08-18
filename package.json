@@ -1,7 +1,7 @@
 {
   "author": "Eldar Gabdullin <eldargab@gmail.com>",
   "name": "express-site",
-  "description": "Simple site for web apps prototyping",
+  "description": "Quick server for web apps developing",
   "version": "0.0.0",
   "bin": {
     "site": "./bin/site"
@@ -11,8 +11,8 @@
     "url": "git://github.com/eldargab/express-site.git"
   },
   "dependencies": {
-    "express": "3.0.x",
+    "express": "3.x",
     "connect-views": "git://github.com/eldargab/connect-views.git",
-    "watch": "0.5.x"
+    "restart": "git://github.com/eldargab/restart.git"
   }
 }

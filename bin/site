@@ -1,97 +1,35 @@
 #!/usr/bin/env node
 
-var PATH = require('path')
+var restart = require('restart')
 var fs = require('fs')
-var path, cwd, cfg
+var PATH = require('path')
+var exists = fs.existsSync
 
-path = process.argv[2] || process.cwd()
-
-if (fs.statSync(path).isDirectory()) {
-    cwd = path
-    cfg = lookupSiteJson(path)
-} else {
-    cwd = PATH.dirname(path)
-    cfg = JSON.parse(fs.readFileSync(path, 'utf8'))
-}
-
-process.chdir(cwd)
-
-cfg.watch = cfg.watch != null ? cfg.watch : ['.']
-
-cfg.watch && cfg.watch.forEach(function (itm) {
-    require('watch').watchTree(itm, {ignoreDotFiles: true}, function (f, curr, prev) {
-        if (typeof f == 'object' && curr === null && prev === null) {
-            // Finished walking the file tree
-            return
+try {
+    var config = process.argv[2], dir
+    if (config) {
+        if (fs.statSync(config).isDirectory()) {
+            dir = config
+            config = null
+        } else {
+            dir = PATH.dirname(config)
+            config = PATH.basename(config)
         }
-        restart()
-    })
-})
-
-restart()
-
-
-var server
-var killing = false
-var building = false
-var rebuild = false
-
-function restart () {
-    if (building) {
-        rebuild = true
-        return
     }
+    dir && process.chdir(dir)
+    config = config || lookupConfig()
 
-    if (killing) return
+    var cfg = config && JSON.parse(fs.readFileSync(config, 'utf8')) || {}
 
-    if (!server || server.exitCode != null) return startup()
-
-    killing = true
-
-    server.on('exit', function () {
-        killing = false
-        startup()
-    })
-
-    server.kill()
+    process.env.PORT = cfg.port
+    cfg.start = cfg.start || ['node', '-e', 'require("express-site")()']
+    restart(cfg.start, cfg.build, cfg.watch)
+} catch (e) {
+    console.error('\033[31m' + e + '\033[39m')
+    process.exit(1)
 }
 
-function startup () {
-    if (!cfg.build) return startApp()
-
-    building = true
-    rebuild = false
-    sh(cfg.build, function (code) {
-        building= false
-        if (rebuild) return startup()
-        if (code == 0) startApp()
-    })
-}
-
-function startApp () {
-    var cmd = cfg.app
-        ? cfg.app
-        : ['node', '-e', "require('express-site')();"]
-    server = sh(cmd)
-}
-
-function lookupSiteJson (dir) {
-    var files = fs.readdirSync(dir).filter(function (itm) {
-        return /site\.json$/.test(itm)
-    })
-    return files.length == 1
-        ? JSON.parse(fs.readFileSync(PATH.join(dir, files[0]), 'utf8'))
-        : {}
-}
-
-function sh (cmd, cb) {
-    var child = require('child_process').spawn(cmd[0], cmd.slice(1))
-    child.stderr.on('data', function (data) {
-        process.stderr.write(data)
-    })
-    child.stdout.on('data', function (data) {
-        process.stdout.write(data)
-    })
-    if (cb) child.on('exit', cb)
-    return child
+function lookupConfig () {
+    return exists('site.json') && 'site.json'
+        || exists('restart.json') && 'restart.json'
 }
