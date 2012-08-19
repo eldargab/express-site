@@ -21,7 +21,7 @@ try {
 
     var cfg = config && JSON.parse(fs.readFileSync(config, 'utf8')) || {}
 
-    process.env.PORT = cfg.port
+    process.env.PORT = cfg.port || 3000
     cfg.start = cfg.start || ['node', '-e', 'require("express-site")()']
     restart(cfg.start, cfg.build, cfg.watch)
 } catch (e) {
