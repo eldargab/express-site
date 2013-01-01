@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "express": "3.x",
-    "connect-views": "git://github.com/eldargab/connect-views.git"
+    "connect-views": "git://github.com/eldargab/connect-views.git",
+    "send": "~0.1.0"
   }
 }

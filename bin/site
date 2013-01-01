@@ -1,12 +1,20 @@
 #!/usr/bin/env node
 
 var Views = require('connect-views')
+var send = require('send')
 var express = require('express')
 var app = express()
 
 app
 .use(Views())
-.use(express.static())
+.use(function (req, res, next) {
+  send(req, req.url)
+  .root(process.cwd())
+  .on('error', function (err) {
+    next(err.status == 404 ? null : err)
+  })
+  .pipe(res)
+})
 .use(express.errorHandler())
 
 var port = process.env.PORT || 3000
