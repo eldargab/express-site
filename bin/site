@@ -1,35 +1,14 @@
 #!/usr/bin/env node
 
-var restart = require('restart')
-var fs = require('fs')
-var PATH = require('path')
-var exists = fs.existsSync
+var Views = require('connect-views')
+var express = require('express')
+var app = express()
 
-try {
-    var config = process.argv[2], dir
-    if (config) {
-        if (fs.statSync(config).isDirectory()) {
-            dir = config
-            config = null
-        } else {
-            dir = PATH.dirname(config)
-            config = PATH.basename(config)
-        }
-    }
-    dir && process.chdir(dir)
-    config = config || lookupConfig()
+app
+.use(Views())
+.use(express.static())
+.use(express.errorHandler())
 
-    var cfg = config && JSON.parse(fs.readFileSync(config, 'utf8')) || {}
-
-    process.env.PORT = cfg.port || 3000
-    cfg.start = cfg.start || ['node', '-e', 'require("express-site")()']
-    restart(cfg.start, cfg.build, cfg.watch)
-} catch (e) {
-    console.error('\033[31m' + e + '\033[39m')
-    process.exit(1)
-}
-
-function lookupConfig () {
-    return exists('site.json') && 'site.json'
-        || exists('restart.json') && 'restart.json'
-}
+var port = process.env.PORT || 3000
+app.listen(port)
+console.log('Site is listening on http://localhost:' + port)
